@@ -38,13 +38,15 @@ export default async function Home() {
           {randomPokemons.map((pokemon) => (
             <Link key={pokemon.id} href={`/pokemons/${pokemon.id}`}>
               <div className="flex flex-col items-center p-4 border rounded hover:shadow-lg">
-                <Image
-                  src={pokemon.image}
-                  alt={pokemon.name}
-                  width={80}
-                  height={80}
-                  className="mb-2"
-                />
+                <div className="transition-transform duration-300 ease-in-out transform hover:scale-110">
+                  <Image
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    width={80}
+                    height={80}
+                    className="mb-2"
+                  />
+                </div>
                 <p className="text-center capitalize">{pokemon.name}</p>
               </div>
             </Link>
@@ -62,13 +64,15 @@ export default async function Home() {
           {randomTypes.map((type, index) => (
             <Link key={index} href={`/types/${type.name.toLowerCase()}`}>
               <div className="flex flex-col items-center p-4 border rounded hover:shadow-lg">
-                <Image
-                  src={type.image}
-                  alt={type.name}
-                  width={50}
-                  height={50}
-                  className="mb-2"
-                />
+                <div className="transition-transform duration-300 ease-in-out transform hover:scale-110">
+                  <Image
+                    src={type.image}
+                    alt={type.name}
+                    width={50}
+                    height={50}
+                    className="mb-2"
+                  />
+                </div>
                 <p className="text-center capitalize">{type.name}</p>
               </div>
             </Link>

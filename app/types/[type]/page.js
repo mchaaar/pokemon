@@ -13,10 +13,12 @@ export default async function PokemonByType({ params }) {
   const { type } = params;
   const pokemons = await fetchPokemonsByType(type);
 
+  const decodedType = decodeURIComponent(type);
+
   return (
     <div className="p-8">
       <h1 className="text-4xl font-bold mb-8 text-center capitalize">
-        Liste des Pokémon de type {type}
+        Liste des Pokémon de type {decodedType}
       </h1>
 
       {pokemons.length > 0 ? (
@@ -26,7 +28,6 @@ export default async function PokemonByType({ params }) {
               key={pokemon.id}
               className="border p-4 rounded shadow hover:shadow-lg flex flex-col items-center"
             >
-              {/* Link wraps the image for navigation */}
               <Link href={`/pokemons/${pokemon.id}`}>
                 <div className="transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer">
                   <Image
@@ -40,11 +41,22 @@ export default async function PokemonByType({ params }) {
               </Link>
               <h3 className="text-lg font-bold capitalize mb-2">{pokemon.name}</h3>
 
-              <p className="text-sm mb-2">
-                <strong>Types:</strong>{" "}
-                {pokemon.apiTypes.map((type) => type.name).join(", ")}
-              </p>
+              <div className="flex flex-col items-start mb-2">
+                {pokemon.apiTypes.map((type) => (
+                  <div key={type.name} className="flex items-center mb-1">
+                    <Image
+                      src={`/types/${type.name.toLowerCase()}.png`}
+                      alt={type.name}
+                      width={24}
+                      height={24}
+                      className="mr-2"
+                    />
+                    <span className="capitalize">{type.name}</span>
+                  </div>
+                ))}
+              </div>
 
+              {/* Display Pokémon Stats */}
               <div className="text-sm">
                 <strong>Stats:</strong>
                 <ul className="list-inside list-disc">
