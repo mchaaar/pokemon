@@ -1,34 +1,20 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePokemons } from "@/app/hooks/usePokemons";
+import { useGroupedPokemons } from "@/app/hooks/useGroupedPokemons";
 
-async function fetchPokemons() {
-  const res = await fetch("https://pokebuildapi.fr/api/v1/pokemon");
-  if (!res.ok) {
-    throw new Error("Erreur lors de la récupération des Pokémon");
-  }
-  return res.json();
-}
+export default function PokemonList() {
+  const { pokemons, error } = usePokemons();
+  const pokemonsByGeneration = useGroupedPokemons(pokemons);
 
-function groupByGeneration(pokemons) {
-  return pokemons.reduce((acc, pokemon) => {
-    const generation = pokemon.apiGeneration;
-    if (!acc[generation]) {
-      acc[generation] = [];
-    }
-    acc[generation].push(pokemon);
-    return acc;
-  }, {});
-}
-
-export default async function PokemonList() {
-  const allPokemons = await fetchPokemons();
-  const pokemonsByGeneration = groupByGeneration(allPokemons);
+  if (error) return <div className="text-red-500 text-center">{error}</div>;
 
   return (
     <div className="p-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Liste des Pokémon par Génération</h1>
 
-      {/* Boutons pour chaque génération */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 justify-center">
         {Object.keys(pokemonsByGeneration).map((generation) => (
           <a
@@ -41,7 +27,6 @@ export default async function PokemonList() {
         ))}
       </div>
 
-      {/* Liste des Pokémon par génération */}
       {Object.entries(pokemonsByGeneration).map(([generation, pokemons]) => (
         <section key={generation} id={`generation-${generation}`} className="mb-16">
           <h2 className="text-3xl font-semibold mb-8 text-center">Génération {generation}</h2>
@@ -51,7 +36,6 @@ export default async function PokemonList() {
                 key={pokemon.id}
                 className="border p-4 rounded shadow hover:shadow-lg flex flex-col items-center"
               >
-                {/* Image du Pokémon */}
                 <Link href={`/pokemons/${pokemon.id}`}>
                   <div className="transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer">
                     <Image
@@ -64,10 +48,8 @@ export default async function PokemonList() {
                   </div>
                 </Link>
 
-                {/* Nom du Pokémon */}
                 <h3 className="text-lg font-bold capitalize mb-2">{pokemon.name}</h3>
 
-                {/* Types avec Images */}
                 <div className="flex flex-wrap justify-center items-center gap-2 mb-2">
                   {pokemon.apiTypes.map((type) => (
                     <div key={type.name} className="flex items-center">
@@ -81,7 +63,6 @@ export default async function PokemonList() {
                   ))}
                 </div>
 
-                {/* Statistiques */}
                 <div className="text-sm">
                   <strong>Stats:</strong>
                   <ul className="list-inside list-disc">

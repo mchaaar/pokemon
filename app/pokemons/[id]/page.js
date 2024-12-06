@@ -1,58 +1,37 @@
+'use client';
+
 import Image from "next/image";
+import { usePokemonById } from "@/app/hooks/usePokemonById";
+import PokemonStats from "@/app/components/PokemonStats";
+import PokemonTypes from "@/app/components/PokemonTypes";
+import { use } from "react";
 
-async function getPokemonData(id) {
-  const res = await fetch(`https://pokebuildapi.fr/api/v1/pokemon/${id}`);
-  if (!res.ok) {
-    throw new Error("Failed to fetch Pokémon data");
-  }
-  return res.json();
-}
+export default function PokemonDetail({ params }) {
+  const { id } = use(params);
+  const { pokemon, error } = usePokemonById(id);
 
-export default async function PokemonDetail({ params }) {
-  const { id } = params;
-  const pokemon = await getPokemonData(id);
+  if (error) return <div className="text-red-500 text-center">{error}</div>;
+  if (!pokemon) return <div className="text-center">Loading...</div>;
 
   return (
     <div className="p-8">
-      <h1 className="text-4xl font-bold capitalize mb-4">{pokemon.name}</h1>
-      <Image
-        src={pokemon.image}
-        alt={pokemon.name}
-        width={300}
-        height={300}
-        className="mb-8"
-      />
-      <div className="text-lg">
-        <h2 className="text-2xl font-semibold">Stats</h2>
-        <ul className="list-disc list-inside">
-          <li>
-            <strong>HP:</strong> {pokemon.stats.HP}
-          </li>
-          <li>
-            <strong>Attack:</strong> {pokemon.stats.attack}
-          </li>
-          <li>
-            <strong>Defense:</strong> {pokemon.stats.defense}
-          </li>
-          <li>
-            <strong>Special Attack:</strong> {pokemon.stats.special_attack}
-          </li>
-          <li>
-            <strong>Special Defense:</strong> {pokemon.stats.special_defense}
-          </li>
-          <li>
-            <strong>Speed:</strong> {pokemon.stats.speed}
-          </li>
-        </ul>
+      <h1 className="text-5xl font-bold capitalize text-center mb-8">{pokemon.name}</h1>
 
-        <h2 className="text-2xl font-semibold mt-6">Types</h2>
-        <ul className="list-disc list-inside">
-          {pokemon.apiTypes.map((type) => (
-            <li key={type.name} className="capitalize">
-              {type.name}
-            </li>
-          ))}
-        </ul>
+      <div className="flex flex-col md:flex-row items-center gap-16 justify-center">
+        <div className="transition-transform duration-300 ease-in-out transform hover:scale-110">
+          <Image
+            src={pokemon.image}
+            alt={pokemon.name}
+            width={300}
+            height={300}
+            className="rounded-lg"
+          />
+        </div>
+
+        <div className="flex flex-col items-center md:items-start">
+          <PokemonStats stats={pokemon.stats} />
+          <PokemonTypes types={pokemon.apiTypes} />
+        </div>
       </div>
     </div>
   );
